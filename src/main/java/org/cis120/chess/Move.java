@@ -33,7 +33,6 @@ class StandardMove extends Move {
     public Piece move(Board board) {
         Piece moved = source.getPiece();
         source.setPiece(null);
-        source.markChanged();
         Piece captured = board.getTile(target).getPiece();
         board.setPiece(target, moved);
         return captured;

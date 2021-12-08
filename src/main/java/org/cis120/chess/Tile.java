@@ -1,19 +1,24 @@
 package org.cis120.chess;
 
-import java.util.Map;
+enum TileColor {
+    TILE_WHITE,
+    TILE_BLACK
+}
 
 /**
  * A mutable wrapper for piece that holds contextual information about it. The board is made up of tiles.
  */
 public class Tile {
+    private final TileColor color;
     private final Board board;
     private final Position pos;
-    private Piece piece;
-    private boolean hasChanged = false;
 
-    public Tile (Board board, Position pos) {
+    private Piece piece;
+
+    public Tile (TileColor color, Board board, Position pos) {
         this.board = board;
         this.pos = pos;
+        this.color = color;
     }
 
     public Position getPos() {
@@ -26,13 +31,5 @@ public class Tile {
 
     public Piece getPiece() {
         return piece;
-    }
-
-    public void markChanged() {
-        hasChanged = true;
-    }
-
-    public MoveHolder generateMoves() {
-        return piece.getMoveGenerator().generate(board, this);
     }
 }
