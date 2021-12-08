@@ -11,7 +11,7 @@ public class Game {
      * include a main method in your final submission.
      */
     public static void main(String[] args) {
-        Runnable game = new org.cis120.tictactoe.RunTicTacToe(); // Set the game you want to run
+        Runnable game = new org.cis120.chess.RunChess(); // Set the game you want to run
                                                                      // here
         SwingUtilities.invokeLater(game);
     }

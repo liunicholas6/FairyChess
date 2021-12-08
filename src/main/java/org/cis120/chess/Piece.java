@@ -23,8 +23,8 @@ public class Piece {
         return symbol;
     }
 
-    public MoveGenerator getMoveGenerator() {
-        return moveGenerator;
+    public MoveHolder generateMoves(Chess chess) {
+        return moveGenerator.generate(chess, this);
     }
 
     public Player getPlayer() {
@@ -38,6 +38,14 @@ public class Piece {
                 ", moveGenerator=" + moveGenerator +
                 ", player=" + player +
                 '}';
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
     public static Piece ChessPiece(String name, char symbol, MoveGenerator moveGenerator, Player player, Position position) {

@@ -1,7 +1,8 @@
 package org.cis120.chess;
 
 enum GameStateType {
-    RUNNING,
+    NO_PIECE_SELECTED,
+    PIECE_SELECTED,
     STALEMATE,
     WIN,
 }
@@ -26,5 +27,13 @@ public class GameState {
 
     public Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public String toString() {
+        return "GameState{" +
+                "player=" + player +
+                ", type=" + type +
+                '}';
     }
 }

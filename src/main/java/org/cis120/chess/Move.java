@@ -1,10 +1,10 @@
 package org.cis120.chess;
 
 public abstract class Move{
-    protected Tile source;
+    protected Piece piece;
     protected Position target;
-    public Move(Tile source, Position target) {
-        this.source = source;
+    public Move(Piece piece, Position target) {
+        this.piece = piece;
         this.target = target;
     }
 
@@ -17,7 +17,7 @@ public abstract class Move{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(source.getPiece().getSymbol()).append(" ").append(target);
+        sb.append(piece.getSymbol()).append(" ").append(target);
         return sb.toString();
     }
 }
@@ -25,16 +25,14 @@ public abstract class Move{
 
 class StandardMove extends Move {
 
-    public StandardMove(Tile source, Position target) {
-        super(source, target);
+    public StandardMove(Piece piece, Position target) {
+        super(piece, target);
     }
 
     @Override
     public Piece move(Board board) {
-        Piece moved = source.getPiece();
-        source.setPiece(null);
-        Piece captured = board.getTile(target).getPiece();
-        board.setPiece(target, moved);
+        Piece captured = board.capturePiece(target);
+        board.movePiece(target, piece);
         return captured;
     }
 }

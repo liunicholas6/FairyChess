@@ -47,17 +47,23 @@ public class Position implements Comparable<Position>{
     }
 
     public Position[] allDirections() {
-        Position[] result = new Position[x == y? 4 : 8];
+        if (x == 0 && y == 0) {
+            return new Position[] {new Position(0,0)};
+        }
+        boolean symmetric = x == y || x == -y || x == 0 || y == 0;
+
+        Position[] result = new Position[symmetric? 4 : 8];
         result[0] = this;
         result[1] = new Position(-x, y);
         result[2] = new Position(-x, -y);
         result[3] = new Position(-y, -x);
-        if (x != y) {
-            result[4] = new Position(y, x);
-            result[5] = new Position(-y, x);
-            result[6] = new Position(-y, -x);
-            result[7] = new Position(y, -x);
+        if (symmetric) {
+            return result;
         }
+        result[4] = new Position(y, x);
+        result[5] = new Position(-y, x);
+        result[6] = new Position(-y, -x);
+        result[7] = new Position(y, -x);
         return result;
     }
 

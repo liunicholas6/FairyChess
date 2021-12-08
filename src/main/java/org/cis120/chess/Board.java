@@ -1,17 +1,10 @@
 package org.cis120.chess;
 
-enum Player {
-    PLAYER1,
-    PLAYER2
-}
 
-/**
- * Represents the chessboard, where every element of the 2D array representation is a
- * tile on the board is a Tile. A tile with a null value is an invalid tile.
- */
+
 public class Board {
     private final static int MAX_DIM = 100;
-    private final Tile[][] representation;
+    private final Piece[][] representation;
     private final int rows;
     private final int cols;
 
@@ -23,13 +16,7 @@ public class Board {
     public Board (int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
-        this.representation = new Tile[rows][cols];
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c ++) {
-                TileColor color = ((rows + cols) % 2 == 0)? TileColor.TILE_BLACK : TileColor.TILE_WHITE;
-                representation[r][c] = new Tile(color, this, new Position(r, c));
-            }
-        }
+        representation = new Piece[rows][cols];
     }
 
     public int getRows() {
@@ -40,25 +27,37 @@ public class Board {
         return cols;
     }
 
-    /**
-     * @param pos Position to check
-     * @return Tile at the position, or null if there is none
-     */
-    public Tile getTile(Position pos) {
+    public boolean isValidPosition(Position pos) {
         int x = pos.getX();
         int y = pos.getY();
-        if (x < 0 || x >= rows || y < 0 || y >= cols) {
-            return null;
-        }
+        return (x >= 0 && x < rows && y >= 0 && y < cols);
+    }
+
+    public Piece getPiece(Position pos) {
         return representation[pos.getX()][pos.getY()];
     }
 
-    /**
-     * @param pos Position to place piece
-     * @param piece Piece to place
-     */
+    public void placePiece(Piece piece) {
+        setPiece(piece.getPosition(), piece);
+    }
+
     public void setPiece(Position pos, Piece piece) {
-        representation[pos.getX()][pos.getY()].setPiece(piece);
+        representation[pos.getX()][pos.getY()] = piece;
+    }
+
+    public void movePiece(Position pos, Piece piece) {
+        setPiece(piece.getPosition(), null);
+        piece.setPosition(pos);
+        placePiece(piece);
+    }
+
+    public Piece capturePiece(Position pos) {
+        Piece captured = getPiece(pos);
+        setPiece(pos, null);
+        if (captured != null) {
+            captured.setPosition(null);
+        }
+        return captured;
     }
 
     @Override
@@ -71,7 +70,7 @@ public class Board {
         for (int c = cols - 1; c >= 0; c--) {
             sb.append("| ");
             for (int r = 0; r < rows; r++) {
-                Piece piece = representation[r][c].getPiece();
+                Piece piece = representation[r][c];
                 sb.append(piece == null? " " : piece.getSymbol()).append(" | ");
             }
             sb.append("\n");
@@ -80,6 +79,7 @@ public class Board {
             }
             sb.append("\n");
         }
+        sb.append("\n");
         return sb.toString();
     }
 }
