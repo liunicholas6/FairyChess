@@ -49,6 +49,7 @@ public class Board {
         setPiece(piece.getPosition(), null);
         piece.setPosition(pos);
         placePiece(piece);
+        piece.markMoved();
     }
 
     public Piece capturePiece(Position pos) {

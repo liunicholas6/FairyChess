@@ -3,14 +3,15 @@ package org.cis120.chess;
 public class Piece {
     private final String filePath;
     private final char symbol;
-    private final MoveGenerator moveGenerator;
+    private final IMoveGenerator moveGenerator;
     private final Player player;
     private Position position;
+    private boolean moved = false;
 
-    public Piece (String filePath, char symbol, MoveGenerator moveGenerator, Player player, Position position) {
+    public Piece (String filePath, char symbol, IMoveGenerator IMoveGenerator, Player player, Position position) {
         this.filePath = filePath;
         this.symbol = symbol;
-        this.moveGenerator = moveGenerator;
+        this.moveGenerator = IMoveGenerator;
         this.player = player;
         this.position = position;
     }
@@ -31,6 +32,22 @@ public class Piece {
         return player;
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
+    public void markMoved() {
+        this.moved = true;
+    }
+
+    public boolean isMoved() {
+        return this.moved;
+    }
+
     @Override
     public String toString() {
         return "Piece{" +
@@ -40,15 +57,7 @@ public class Piece {
                 '}';
     }
 
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
-    public static Piece ChessPiece(String name, char symbol, MoveGenerator moveGenerator, Player player, Position position) {
+    public static Piece ChessPiece(String name, char symbol, IMoveGenerator moveGenerator, Player player, Position position) {
         StringBuilder filePathBuilder = new StringBuilder();
         filePathBuilder.append("files/ChessSprites/")
                 .append((player == Player.PLAYER1) ? "w" : "b")
@@ -59,19 +68,18 @@ public class Piece {
     }
 
     public static Piece Rook(Player player, Position position) {
-        return ChessPiece("rook",'R', MoveGenerator.ROOK, player, position);
+        return ChessPiece("rook",'R', IMoveGenerator.ROOK, player, position);
     }
 
     public static Piece Knight(Player player, Position position) {
-        return ChessPiece("knight", 'N', MoveGenerator.KNIGHT, player, position);
+        return ChessPiece("knight", 'N', IMoveGenerator.KNIGHT, player, position);
     }
 
     public static Piece Bishop(Player player, Position position) {
-        return ChessPiece("bishop", 'B', MoveGenerator.BISHOP, player, position);
+        return ChessPiece("bishop", 'B', IMoveGenerator.BISHOP, player, position);
     }
 
     public static Piece Queen(Player player, Position position) {
-        return ChessPiece("queen", 'Q', MoveGenerator.QUEEN, player, position);
+        return ChessPiece("queen", 'Q', IMoveGenerator.QUEEN, player, position);
     }
-
 }

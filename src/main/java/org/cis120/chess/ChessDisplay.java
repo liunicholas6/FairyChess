@@ -48,10 +48,8 @@ public class ChessDisplay extends JPanel{
         });
 
         try {
-            System.out.println("Made it to try block");
             WHITE_TILE = ImageIO.read(new File("files/ChessSprites/tile_white.png"));
             BLACK_TILE = ImageIO.read(new File("files/ChessSprites/tile_black.png"));
-            System.out.println("Loaded Tiles");
             for(Piece piece : chess.getPieces()) {
                 String filePath = piece.getFilePath();
                 if (!piece_images.containsKey(filePath)){

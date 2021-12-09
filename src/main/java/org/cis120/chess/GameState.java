@@ -1,8 +1,7 @@
 package org.cis120.chess;
 
 enum GameStateType {
-    NO_PIECE_SELECTED,
-    PIECE_SELECTED,
+    RUNNING,
     STALEMATE,
     WIN,
 }
@@ -27,6 +26,17 @@ public class GameState {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Player getOtherPlayer() {
+        switch (player) {
+            case PLAYER1:
+                return Player.PLAYER2;
+            case PLAYER2:
+                return Player.PLAYER1;
+            default:
+                return null;
+        }
     }
 
     @Override

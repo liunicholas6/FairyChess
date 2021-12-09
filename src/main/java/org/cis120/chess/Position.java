@@ -1,5 +1,6 @@
 package org.cis120.chess;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Position implements Comparable<Position>{
@@ -38,33 +39,45 @@ public class Position implements Comparable<Position>{
         return new Position (x * scale, y * scale);
     }
 
-    public Position times(Position other) {
-        return new Position (x * other.x, y * other.y);
-    }
-
-    public int maxDim() {
-        return Math.max(x, y);
-    }
-
     public Position[] allDirections() {
         if (x == 0 && y == 0) {
-            return new Position[] {new Position(0,0)};
+            return new Position[] {this};
         }
-        boolean symmetric = x == y || x == -y || x == 0 || y == 0;
-
-        Position[] result = new Position[symmetric? 4 : 8];
-        result[0] = this;
-        result[1] = new Position(-x, y);
-        result[2] = new Position(-x, -y);
-        result[3] = new Position(-y, -x);
-        if (symmetric) {
-            return result;
+        if (x == 0) {
+            return new Position[] {
+                    this,
+                    new Position(y, 0),
+                    new Position(0, -y),
+                    new Position (-y, 0)
+            };
         }
-        result[4] = new Position(y, x);
-        result[5] = new Position(-y, x);
-        result[6] = new Position(-y, -x);
-        result[7] = new Position(y, -x);
-        return result;
+        if (y == 0) {
+            return new Position[] {
+                    this,
+                    new Position(0, x),
+                    new Position(-x, 0),
+                    new Position (0, -x)
+            };
+        }
+        if (x == y) {
+            return new Position[] {
+                    this,
+                    new Position(x, y),
+                    new Position(-x, y),
+                    new Position(x, -y),
+                    new Position(-x, -y)
+            };
+        }
+        return new Position[] {
+                this,
+                new Position(y, x),
+                new Position(-x, y),
+                new Position(y, -x),
+                new Position(x, -y),
+                new Position(-y, x),
+                new Position(-x, -y),
+                new Position(-y, -x)
+        };
     }
 
     @Override

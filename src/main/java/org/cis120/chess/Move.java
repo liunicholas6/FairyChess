@@ -1,6 +1,7 @@
 package org.cis120.chess;
 
-public abstract class Move{
+
+abstract class Move{
     protected Piece piece;
     protected Position target;
     public Move(Piece piece, Position target) {

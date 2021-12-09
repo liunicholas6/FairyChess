@@ -1,5 +1,7 @@
 package org.cis120.chess;
 
+import org.cis120.Game;
+
 import java.util.*;
 
 enum Player {
@@ -19,7 +21,7 @@ class Chess {
     public Chess() {
         board = new Board(8, 8);
         this.moveHistory = new ArrayList<>();
-        this.gameState = new GameState(GameStateType.NO_PIECE_SELECTED, Player.PLAYER1);
+        this.gameState = new GameState(GameStateType.RUNNING, Player.PLAYER1);
 
         pieces = new Piece[] {
                 Piece.Rook(Player.PLAYER1, new Position("a1")),
@@ -62,9 +64,6 @@ class Chess {
     }
 
     public void handlePositionalInput(Position position) {
-        if (selectedMoves == null) {
-            selectPiece(position);
-        }
         if (selectedMoves != null && selectedMoves.containsKey(position)) {
             movePiece(position);
         }
@@ -83,9 +82,16 @@ class Chess {
     }
 
     public void movePiece(Position pos) {
-        selectedMoves.get(pos).move(board);
+        Move move = selectedMoves.get(pos);
+        moveHistory.add(move);
+        move.move(board);
         selectedPiece = null;
         selectedMoves = null;
+        nextTurn();
+    }
+
+    public void nextTurn() {
+        gameState = new GameState(GameStateType.RUNNING, gameState.getOtherPlayer());
     }
 
     public static void main(String[] args) {

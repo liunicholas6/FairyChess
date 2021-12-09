@@ -2,17 +2,17 @@ package org.cis120.chess;
 
 import java.util.*;
 
-public interface MoveGenerator {
+public interface IMoveGenerator {
 
     MoveHolder generate(Chess chess, Piece source);
 
-    MoveGenerator ROOK = new Rider(0, 1);
-    MoveGenerator KNIGHT = new Leaper(1, 2);
-    MoveGenerator BISHOP = new Rider(1, 1);
-    MoveGenerator QUEEN = new Compound(ROOK, BISHOP);
+    IMoveGenerator ROOK = new Rider(0, 1);
+    IMoveGenerator KNIGHT = new Leaper(1, 2);
+    IMoveGenerator BISHOP = new Rider(1, 1);
+    IMoveGenerator QUEEN = new Compound(ROOK, BISHOP);
 }
 
-class Leaper implements MoveGenerator {
+class Leaper implements IMoveGenerator {
     private final Position[] directions;
     public Leaper(int x, int y) {
         directions = new Position(x, y).allDirections();
@@ -36,7 +36,7 @@ class Leaper implements MoveGenerator {
     }
 }
 
-class Rider implements MoveGenerator {
+class Rider implements IMoveGenerator {
     private final Position[] directions;
 
     public Rider(int x, int y) {
@@ -70,24 +70,57 @@ class Rider implements MoveGenerator {
     }
 }
 
-class Compound implements MoveGenerator {
-    private final Collection<MoveGenerator> generators;
+class Compound implements IMoveGenerator {
+    private final Collection<IMoveGenerator> generators;
 
-    public Compound (MoveGenerator generator1, MoveGenerator generator2) {
+    public Compound (IMoveGenerator generator1, IMoveGenerator generator2) {
         this.generators = Collections.unmodifiableList(Arrays.asList(generator1, generator2));
     }
 
-    public Compound(Collection<MoveGenerator> generators) {
+    public Compound(Collection<IMoveGenerator> generators) {
         this.generators = generators;
     }
 
     @Override
     public MoveHolder generate(Chess chess, Piece source) {
         MoveHolder moves = new MoveHolder();
-        for (MoveGenerator generator : generators) {
+        for (IMoveGenerator generator : generators) {
             moves.putAll(generator.generate(chess, source));
         }
         return moves;
+    }
+}
+
+class PawnMoveGenerator implements IMoveGenerator {
+    @Override
+    public MoveHolder generate(Chess chess, Piece source) {
+        Position forwards;
+        switch (source.getPlayer()) {
+            case PLAYER1:
+                forwards = new Position(0, 1);
+                break;
+            case PLAYER2:
+                forwards = new Position(0, -1);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + source.getPlayer());
+        }
+        Board board = chess.getBoard();
+        MoveHolder moves = new MoveHolder();
+        Position positionAhead = source.getPosition().plus(forwards);
+        if (board.isValidPosition(positionAhead)) {
+            Piece pieceInFront = board.getPiece(positionAhead);
+            Position position2Ahead = positionAhead.plus(forwards);
+            if (pieceInFront == null) {
+                if (board.isValidPosition(position2Ahead)){
+                    moves.addMove(new StandardMove(source, positionAhead));
+                }
+                else {
+
+                }
+            }
+        }
+        return null;
     }
 }
 
