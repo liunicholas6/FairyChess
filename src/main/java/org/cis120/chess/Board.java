@@ -54,16 +54,18 @@ public class Board{
     }
 
     public ArrayList<Piece> getPieces() {
-        ArrayList<Piece> result = new ArrayList<Piece>(32);
+        ArrayList<Piece> result = new ArrayList<>(32);
         for (Piece[] row : representation) {
             for (Piece piece : row) {
                 if (piece != null) {
                     result.add(piece);
-                };
+                }
             }
         }
         return result;
     }
+
+
 
     public Piece capturePiece(Position pos) {
         Piece captured = getPiece(pos);
@@ -100,12 +102,11 @@ public class Board{
     }
 
     public void copyOnto (Board other) {
-        for (Piece[] row : other.representation) {
-            for (Piece piece : row) {
-                if (piece != null) {
-                    other.placePiece(PieceFactory.getPiece(piece.getSymbol(),
-                            piece.getPlayer(), piece.getPosition()));
-                }
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                Piece original = representation[r][c];
+                Piece copy = (original == null) ? null : original.copy();
+                other.representation[r][c] = copy;
             }
         }
     }

@@ -27,7 +27,7 @@ public class Piece {
     }
 
     public MoveHolder generateMoves(Chess chess) {
-        return moveGenerator.generate(chess, this);
+        return moveGenerator.generate(chess, position);
     }
 
     public Player getPlayer() {
@@ -48,6 +48,10 @@ public class Piece {
 
     public boolean isMoved() {
         return this.moved;
+    }
+
+    public Piece copy() {
+        return PieceFactory.getPiece(symbol, player, position);
     }
 
     @Override

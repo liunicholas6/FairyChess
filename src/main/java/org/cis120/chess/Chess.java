@@ -24,6 +24,13 @@ class Chess{
         constructorHelper(Player.PLAYER2);
     }
 
+    public Chess(Board board, ArrayList<Move> moveHistory, GameState gameState) {
+        this.board = new Board(8, 8);
+        board.copyOnto(this.board);
+        this.moveHistory = moveHistory;
+        this.gameState = gameState;
+    }
+
     private void constructorHelper(Player player) {
         int y = player == Player.PLAYER1 ? 0 : 7;
         board.placePiece(PieceFactory.getPiece('R', player, 0, y));
@@ -53,17 +60,22 @@ class Chess{
     }
 
     public MoveHolder generateMoves(Piece piece) {
-        Chess copy = new Chess();
-        List<Move> moveList = piece.generateMoves(copy).values()
+        Chess copy = new Chess(board, moveHistory, gameState);
+        Set<Position> validTargets = piece.generateMoves(copy).values()
                 .stream().parallel()
                 .filter(move -> {
                     board.copyOnto(copy.board);
                     move.move(copy);
                     return !copy.inCheck(piece.getPlayer());
                 })
+                .map(Move::getTarget)
+                .collect(Collectors.toSet());
+        List<Move> validMoves = piece.generateMoves(this).values()
+                .stream().parallel()
+                .filter(move -> validTargets.contains(move.getTarget()))
                 .collect(Collectors.toList());
         MoveHolder moves = new MoveHolder();
-        for (Move move : moveList) {
+        for (Move move : validMoves) {
             moves.addMove(move);
         }
         return moves;
@@ -112,16 +124,5 @@ class Chess{
     public void nextTurn() {
         gameState = new GameState(GameStateType.RUNNING, GameState.getOtherPlayer(gameState.getPlayer()));
         System.out.println(inCheck(gameState.getPlayer()));
-    }
-
-    public static void main(String[] args) {
-        Chess chess = new Chess();
-        chess.handlePositionalInput(new Position("a1"));
-        Piece whiteRook = chess.selectedPiece;
-        System.out.println(whiteRook);
-        MoveHolder generatedMoves = chess.selectedMoves;
-        System.out.println(generatedMoves);
-        generatedMoves.get(new Position("a3")).move(chess);
-        System.out.print(chess.board);
     }
 }
