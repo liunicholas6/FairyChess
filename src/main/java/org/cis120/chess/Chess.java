@@ -24,9 +24,9 @@ class Chess{
         constructorHelper(Player.PLAYER2);
     }
 
-    public Chess(Board board, ArrayList<Move> moveHistory, GameState gameState) {
+    public Chess(Board originalBoard, ArrayList<Move> moveHistory, GameState gameState) {
         this.board = new Board(8, 8);
-        board.copyOnto(this.board);
+        originalBoard.copyOnto(this.board);
         this.moveHistory = moveHistory;
         this.gameState = gameState;
     }
@@ -60,12 +60,14 @@ class Chess{
     }
 
     public MoveHolder generateMoves(Piece piece) {
-        Chess copy = new Chess(board, moveHistory, gameState);
-        Set<Position> validTargets = piece.generateMoves(copy).values()
+        Chess copy0 = new Chess(board, moveHistory, gameState);
+        Set<Position> validTargets = piece.generateMoves(copy0).values()
                 .stream().parallel()
                 .filter(move -> {
+                    Chess copy = new Chess(board, moveHistory, gameState);
                     board.copyOnto(copy.board);
                     move.move(copy);
+                    boolean isInCheck = copy.inCheck(piece.getPlayer());
                     return !copy.inCheck(piece.getPlayer());
                 })
                 .map(Move::getTarget)

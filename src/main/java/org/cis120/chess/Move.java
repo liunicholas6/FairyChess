@@ -1,17 +1,17 @@
 package org.cis120.chess;
 
 public class Move{
-    protected Piece piece;
+    protected Position source;
     protected Position target;
     protected Position capturePos;
 
-    public Move(Piece piece, Position target) {
-        this.piece = piece;
+    public Move(Position source, Position target) {
+        this.source = source;
         this.target = target;
         this.capturePos = target;
     }
-    public Piece getPiece() {
-        return piece;
+    public Position getSource() {
+        return source;
     }
 
     public Position getTarget() {
@@ -25,14 +25,7 @@ public class Move{
     public Piece move(Chess chess) {
         Board board = chess.getBoard();
         Piece captured = board.capturePiece(target);
-        board.movePiece(target, piece);
+        board.movePiece(target, source);
         return captured;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(piece.getSymbol()).append(" ").append(target);
-        return sb.toString();
     }
 }

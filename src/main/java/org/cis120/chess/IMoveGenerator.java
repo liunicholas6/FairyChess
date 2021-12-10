@@ -40,7 +40,7 @@ class Leaper implements IMoveGenerator {
             if (board.isValidPosition(targetPosition)) {
                 Piece targetPiece = board.getPiece(targetPosition);
                 if (targetPiece == null || targetPiece.getPlayer() != sourcePiece.getPlayer()) {
-                        moves.addMove(new Move(sourcePiece, targetPosition));
+                        moves.addMove(new Move(source, targetPosition));
                 }
             }
         }
@@ -68,11 +68,11 @@ class Rider implements IMoveGenerator {
                 }
                 Piece targetPiece = board.getPiece(targetPosition);
                 if (targetPiece == null) {
-                    moves.addMove(new Move(sourcePiece, targetPosition));
+                    moves.addMove(new Move(source, targetPosition));
                 }
                 else {
                     if (targetPiece.getPlayer() != sourcePiece.getPlayer()) {
-                        moves.addMove(new Move(sourcePiece, targetPosition));
+                        moves.addMove(new Move(source, targetPosition));
                     }
                     break;
                 }
@@ -130,7 +130,7 @@ class PromotionMoveGenerator implements IMoveGenerator {
     class PromotionMove extends Move {
         private final Move originalMove;
         public PromotionMove(Move originalMove) {
-            super(originalMove.getPiece(), originalMove.getTarget());
+            super(originalMove.getSource(), originalMove.getTarget());
             this.originalMove = originalMove;
         }
         @Override
@@ -168,10 +168,10 @@ class PawnMoveGenerator implements IMoveGenerator {
         Piece pieceAhead = board.getPiece(posAhead);
 
         if (pieceAhead == null) {
-            moves.addMove(new Move(sourcePiece, posAhead));
+            moves.addMove(new Move(source, posAhead));
             Position pos2Ahead = posAhead.plus(forwards);
             if (!sourcePiece.isMoved() && board.getPiece(pos2Ahead) == null) {
-                moves.addMove(new Move(sourcePiece, pos2Ahead));
+                moves.addMove(new Move(source, pos2Ahead));
             }
         }
 
@@ -183,7 +183,7 @@ class PawnMoveGenerator implements IMoveGenerator {
             if (board.isValidPosition(diagonal)) {
                 Piece atDiagonal = board.getPiece(diagonal);
                 if (atDiagonal != null && atDiagonal.getPlayer() != sourcePiece.getPlayer()) {
-                    moves.addMove(new Move(sourcePiece, diagonal));
+                    moves.addMove(new Move(source, diagonal));
                 }
             }
         }
@@ -213,7 +213,7 @@ class Crown implements IMoveGenerator {
             if (board.isValidPosition(target)) {
                 Piece atDirection = board.getPiece(target);
                 if (atDirection == null || atDirection.getPlayer() != sourcePiece.getPlayer()) {
-                    moves.addMove(new Move(sourcePiece, target));
+                    moves.addMove(new Move(source, target));
                 }
             }
         }

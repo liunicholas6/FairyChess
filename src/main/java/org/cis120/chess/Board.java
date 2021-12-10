@@ -46,8 +46,9 @@ public class Board{
         setPiece(piece.getPosition(), piece);
     }
 
-    public void movePiece(Position pos, Piece piece) {
-        setPiece(piece.getPosition(), null);
+    public void movePiece(Position pos, Position source) {
+        Piece piece = getPiece(source);
+        setPiece(source, null);
         piece.setPosition(pos);
         placePiece(piece);
         piece.markMoved();
