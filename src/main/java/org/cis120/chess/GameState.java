@@ -6,6 +6,11 @@ enum GameStateType {
     WIN,
 }
 
+enum Player {
+    PLAYER1,
+    PLAYER2
+}
+
 public class GameState {
     private final Player player;
     private final GameStateType type;
@@ -28,7 +33,7 @@ public class GameState {
         return player;
     }
 
-    public Player getOtherPlayer() {
+    public static Player getOtherPlayer(Player player) {
         switch (player) {
             case PLAYER1:
                 return Player.PLAYER2;

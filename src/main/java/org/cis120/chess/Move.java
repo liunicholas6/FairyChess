@@ -1,39 +1,38 @@
 package org.cis120.chess;
 
-
-abstract class Move{
+public class Move{
     protected Piece piece;
     protected Position target;
+    protected Position capturePos;
+
     public Move(Piece piece, Position target) {
         this.piece = piece;
         this.target = target;
+        this.capturePos = target;
+    }
+    public Piece getPiece() {
+        return piece;
     }
 
     public Position getTarget() {
         return target;
     }
 
-    public abstract Piece move(Board board);
+    public Position getCapturePos() {
+        return capturePos;
+    }
+
+    public Piece move(Chess chess) {
+        Board board = chess.getBoard();
+        Piece captured = board.capturePiece(target);
+        board.movePiece(target, piece);
+        return captured;
+    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(piece.getSymbol()).append(" ").append(target);
         return sb.toString();
-    }
-}
-
-
-class StandardMove extends Move {
-
-    public StandardMove(Piece piece, Position target) {
-        super(piece, target);
-    }
-
-    @Override
-    public Piece move(Board board) {
-        Piece captured = board.capturePiece(target);
-        board.movePiece(target, piece);
-        return captured;
     }
 }

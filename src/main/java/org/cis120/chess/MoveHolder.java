@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.TreeMap;
 
 public class MoveHolder extends TreeMap<Position, Move>{
+
     public void addMove(Move move) {
         put(move.getTarget(), move);
     }

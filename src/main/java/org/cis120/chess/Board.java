@@ -1,8 +1,9 @@
 package org.cis120.chess;
 
 
+import java.util.ArrayList;
 
-public class Board {
+public class Board{
     private final static int MAX_DIM = 100;
     private final Piece[][] representation;
     private final int rows;
@@ -27,22 +28,22 @@ public class Board {
         return cols;
     }
 
+    public Piece getPiece(Position pos) {
+        return representation[pos.getX()][pos.getY()];
+    }
+
     public boolean isValidPosition(Position pos) {
         int x = pos.getX();
         int y = pos.getY();
         return (x >= 0 && x < rows && y >= 0 && y < cols);
     }
 
-    public Piece getPiece(Position pos) {
-        return representation[pos.getX()][pos.getY()];
+    public void setPiece(Position pos, Piece piece) {
+        representation[pos.getX()][pos.getY()] = piece;
     }
 
     public void placePiece(Piece piece) {
         setPiece(piece.getPosition(), piece);
-    }
-
-    public void setPiece(Position pos, Piece piece) {
-        representation[pos.getX()][pos.getY()] = piece;
     }
 
     public void movePiece(Position pos, Piece piece) {
@@ -50,6 +51,18 @@ public class Board {
         piece.setPosition(pos);
         placePiece(piece);
         piece.markMoved();
+    }
+
+    public ArrayList<Piece> getPieces() {
+        ArrayList<Piece> result = new ArrayList<Piece>(32);
+        for (Piece[] row : representation) {
+            for (Piece piece : row) {
+                if (piece != null) {
+                    result.add(piece);
+                };
+            }
+        }
+        return result;
     }
 
     public Piece capturePiece(Position pos) {
@@ -60,6 +73,8 @@ public class Board {
         }
         return captured;
     }
+
+
 
     @Override
     public String toString() {
@@ -82,5 +97,16 @@ public class Board {
         }
         sb.append("\n");
         return sb.toString();
+    }
+
+    public void copyOnto (Board other) {
+        for (Piece[] row : other.representation) {
+            for (Piece piece : row) {
+                if (piece != null) {
+                    other.placePiece(PieceFactory.getPiece(piece.getSymbol(),
+                            piece.getPlayer(), piece.getPosition()));
+                }
+            }
+        }
     }
 }
