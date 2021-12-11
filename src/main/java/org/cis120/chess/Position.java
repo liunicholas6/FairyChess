@@ -5,6 +5,11 @@ import java.util.Objects;
 
 public class Position implements Comparable<Position>{
 
+    private static final Position NORTH = new Position(0, 1);
+    private static final Position SOUTH = new Position(0, -1);
+    private static final Position EAST = new Position(1, 0);
+    private static final Position WEST = new Position(-1, 0);
+
     private final int x;
     private final int y;
 
@@ -35,8 +40,25 @@ public class Position implements Comparable<Position>{
         return new Position (x + other.x, y + other.y);
     }
 
+    public Position minus(Position other) {
+        return new Position (x - other.x, y - other.y);
+    }
+
     public Position times(int scale) {
         return new Position (x * scale, y * scale);
+    }
+    public Position flipDirectionIfPlayer2(Player player) {
+        if (player == Player.PLAYER1) {
+            return this;
+        }
+        return new Position(-x, -y);
+    }
+
+    public boolean betweenVertically(Position a, Position b) {
+        if (a.x != b.x) {
+            throw new IllegalArgumentException();
+        }
+        return x == a.x && (y > a.y != y > b.y);
     }
 
     public Position[] allDirections() {

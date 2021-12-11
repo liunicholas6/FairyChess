@@ -1,15 +1,38 @@
 package org.cis120.chess;
 
-public class Move{
+enum MoveType {
+    STANDARD,
+    PROMOTION,
+    PAWN_JUMP,
+    EN_PASSANT,
+}
+
+
+public class Move {
+    protected final MoveType type;
     protected Position source;
     protected Position target;
     protected Position capturePos;
 
-    public Move(Position source, Position target) {
+    public Move(Position source, Position target, Position capturePos, MoveType type) {
+        this.type = type;
         this.source = source;
         this.target = target;
-        this.capturePos = target;
+        this.capturePos = capturePos;
     }
+
+    public Move(Position source, Position target, MoveType type) {
+        this(source, target, target, type);
+    }
+
+    public Move(Position source, Position target) {
+        this(source, target, MoveType.STANDARD);
+    }
+
+    public MoveType getType() {
+        return type;
+    }
+
     public Position getSource() {
         return source;
     }
@@ -22,10 +45,9 @@ public class Move{
         return capturePos;
     }
 
-    public Piece move(Chess chess) {
+    public void move(Chess chess) {
         Board board = chess.getBoard();
-        Piece captured = board.capturePiece(target);
+        board.capturePiece(capturePos);
         board.movePiece(target, source);
-        return captured;
     }
 }

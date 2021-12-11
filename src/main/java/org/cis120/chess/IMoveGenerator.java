@@ -8,11 +8,11 @@ public interface IMoveGenerator {
 
     MoveHolder generate(Chess chess, Position source);
 
-    IMoveGenerator WHITE_PAWN = new PromotionMoveGenerator(
+    IMoveGenerator WHITE_PAWN = new Promoter(
             new PawnMoveGenerator(Player.PLAYER1),
             p -> PieceFactory.getPiece('Q', Player.PLAYER1, p),
             move -> move.getTarget().getY() == 7);
-    IMoveGenerator BLACK_PAWN = new PromotionMoveGenerator(
+    IMoveGenerator BLACK_PAWN = new Promoter(
             new PawnMoveGenerator(Player.PLAYER2),
             p -> PieceFactory.getPiece('Q', Player.PLAYER2, p),
             move -> move.getTarget().getY() == 0);
@@ -103,13 +103,13 @@ class Compound implements IMoveGenerator {
     }
 }
 
-class PromotionMoveGenerator implements IMoveGenerator {
+class Promoter implements IMoveGenerator {
     private final IMoveGenerator originalMoveGenerator;
     private final Function<Position, Piece> makePiece;
     private final Predicate<Move> condition;
 
-    public PromotionMoveGenerator(IMoveGenerator originalMoveGenerator, Function<Position, Piece> makePiece,
-                                   Predicate<Move> condition) {
+    public Promoter(IMoveGenerator originalMoveGenerator, Function<Position, Piece> makePiece,
+                    Predicate<Move> condition) {
         this.makePiece = makePiece;
         this.originalMoveGenerator = originalMoveGenerator;
         this.condition = condition;
@@ -130,32 +130,22 @@ class PromotionMoveGenerator implements IMoveGenerator {
     class PromotionMove extends Move {
         private final Move originalMove;
         public PromotionMove(Move originalMove) {
-            super(originalMove.getSource(), originalMove.getTarget());
+            super(originalMove.getSource(), originalMove.getTarget(), MoveType.PROMOTION);
             this.originalMove = originalMove;
         }
         @Override
-        public Piece move(Chess chess) {
-            Piece captured = originalMove.move(chess);
+        public void move(Chess chess) {
+            originalMove.move(chess);
             Piece promoted = makePiece.apply(originalMove.target);
             chess.getBoard().setPiece(target, promoted);
-            return captured;
         }
     }
 }
 
 class PawnMoveGenerator implements IMoveGenerator {
-    private final Position forwards;
+    private final Player player;
     public PawnMoveGenerator (Player player) {
-        switch (player) {
-            case PLAYER1:
-                forwards = new Position(0, 1);
-                break;
-            case PLAYER2:
-                forwards = new Position(0, -1);
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        this.player = player;
     }
 
     @Override
@@ -163,27 +153,46 @@ class PawnMoveGenerator implements IMoveGenerator {
         Board board = chess.getBoard();
         Piece sourcePiece = board.getPiece(source);
         MoveHolder moves = new MoveHolder();
+        Position forwards = new Position(0, 1).flipDirectionIfPlayer2(player);
+        Position ahead = source.plus(forwards);
 
-        Position posAhead = source.plus(forwards);
-        Piece pieceAhead = board.getPiece(posAhead);
-
-        if (pieceAhead == null) {
-            moves.addMove(new Move(source, posAhead));
-            Position pos2Ahead = posAhead.plus(forwards);
-            if (!sourcePiece.isMoved() && board.getPiece(pos2Ahead) == null) {
-                moves.addMove(new Move(source, pos2Ahead));
+        /*
+        In normal chess, this pawn only can go two spaces on the first move.
+        But this method is made slightly more complicated than necessary
+        to work with Ralph Betza's chess on a very large board.
+         */
+        if (!sourcePiece.isMoved()) {
+            for (int r = 1; r < board.getRows()/2 - 1; r++) {
+                Position target = source.plus(forwards.times(r));
+                if (board.getPiece(target) == null) {
+                    moves.addMove(new Move(source, target, MoveType.PAWN_JUMP));
+                }
+            }
+        }
+        else {
+            if (board.getPiece(ahead) == null) {
+                moves.addMove(new Move(source, ahead));
             }
         }
 
         Position[] diagonals = new Position[]{
-                posAhead.plus(new Position(-1, 0)),
-                posAhead.plus(new Position(1, 0))};
+                ahead.plus(new Position(-1, 0)),
+                ahead.plus(new Position(1, 0))};
 
-        for (Position diagonal : diagonals) {
-            if (board.isValidPosition(diagonal)) {
-                Piece atDiagonal = board.getPiece(diagonal);
-                if (atDiagonal != null && atDiagonal.getPlayer() != sourcePiece.getPlayer()) {
-                    moves.addMove(new Move(source, diagonal));
+        for (Position target : diagonals) {
+            if (board.isValidPosition(target)) {
+                Piece atTarget = board.getPiece(target);
+                if (atTarget != null && atTarget.getPlayer() != sourcePiece.getPlayer()) {
+                    moves.addMove(new Move(source, target));
+                }
+                else {
+                    Move lastMove = chess.getLastMove();
+                    if (atTarget == null &&
+                            lastMove != null &&
+                            lastMove.getType() == MoveType.PAWN_JUMP &&
+                            target.betweenVertically(lastMove.getSource(), lastMove.getTarget())) {
+                        moves.addMove(new Move(source, target, lastMove.getTarget(), MoveType.EN_PASSANT));
+                    }
                 }
             }
         }
@@ -192,7 +201,7 @@ class PawnMoveGenerator implements IMoveGenerator {
 }
 
 class Crown implements IMoveGenerator {
-    private Position[] directions = new Position[] {
+    private final Position[] directions = new Position[] {
             new Position(-1, -1),
             new Position (-1, 0),
             new Position (-1, 1),

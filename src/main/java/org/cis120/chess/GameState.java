@@ -3,7 +3,7 @@ package org.cis120.chess;
 enum GameStateType {
     RUNNING,
     STALEMATE,
-    WIN,
+    CHECKMATE,
 }
 
 enum Player {

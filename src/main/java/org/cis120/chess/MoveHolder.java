@@ -1,6 +1,5 @@
 package org.cis120.chess;
 
-import java.util.Collection;
 import java.util.TreeMap;
 
 public class MoveHolder extends TreeMap<Position, Move>{
