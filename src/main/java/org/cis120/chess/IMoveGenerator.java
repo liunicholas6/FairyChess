@@ -26,6 +26,7 @@ public interface IMoveGenerator {
 
 class Leaper implements IMoveGenerator {
     private final Position[] directions;
+
     public Leaper(int x, int y) {
         directions = new Position(x, y).allDirections();
     }
@@ -35,12 +36,12 @@ class Leaper implements IMoveGenerator {
         Board board = chess.getBoard();
         Piece sourcePiece = board.getPiece(source);
         MoveHolder moves = new MoveHolder();
-        for (Position direction: directions) {
+        for (Position direction : directions) {
             Position targetPosition = source.plus(direction);
             if (board.isValidPosition(targetPosition)) {
                 Piece targetPiece = board.getPiece(targetPosition);
                 if (targetPiece == null || targetPiece.getPlayer() != sourcePiece.getPlayer()) {
-                        moves.addMove(new Move(source, targetPosition));
+                    moves.addMove(new Move(source, targetPosition));
                 }
             }
         }
@@ -69,8 +70,7 @@ class Rider implements IMoveGenerator {
                 Piece targetPiece = board.getPiece(targetPosition);
                 if (targetPiece == null) {
                     moves.addMove(new Move(source, targetPosition));
-                }
-                else {
+                } else {
                     if (targetPiece.getPlayer() != sourcePiece.getPlayer()) {
                         moves.addMove(new Move(source, targetPosition));
                     }
@@ -85,7 +85,7 @@ class Rider implements IMoveGenerator {
 class Compound implements IMoveGenerator {
     private final Collection<IMoveGenerator> generators;
 
-    public Compound (IMoveGenerator generator1, IMoveGenerator generator2) {
+    public Compound(IMoveGenerator generator1, IMoveGenerator generator2) {
         this.generators = Collections.unmodifiableList(Arrays.asList(generator1, generator2));
     }
 
@@ -129,10 +129,12 @@ class Promoter implements IMoveGenerator {
 
     class PromotionMove extends Move {
         private final Move originalMove;
+
         public PromotionMove(Move originalMove) {
             super(originalMove.getSource(), originalMove.getTarget(), MoveType.PROMOTION);
             this.originalMove = originalMove;
         }
+
         @Override
         public void move(Chess chess) {
             originalMove.move(chess);
@@ -144,7 +146,8 @@ class Promoter implements IMoveGenerator {
 
 class PawnMoveGenerator implements IMoveGenerator {
     private final Player player;
-    public PawnMoveGenerator (Player player) {
+
+    public PawnMoveGenerator(Player player) {
         this.player = player;
     }
 
@@ -162,14 +165,13 @@ class PawnMoveGenerator implements IMoveGenerator {
         to work with Ralph Betza's chess on a very large board.
          */
         if (!sourcePiece.isMoved()) {
-            for (int r = 1; r < board.getRows()/2 - 1; r++) {
+            for (int r = 1; r < board.getRows() / 2 - 1; r++) {
                 Position target = source.plus(forwards.times(r));
                 if (board.getPiece(target) == null) {
                     moves.addMove(new Move(source, target, MoveType.PAWN_JUMP));
                 }
             }
-        }
-        else {
+        } else {
             if (board.getPiece(ahead) == null) {
                 moves.addMove(new Move(source, ahead));
             }
@@ -184,8 +186,7 @@ class PawnMoveGenerator implements IMoveGenerator {
                 Piece atTarget = board.getPiece(target);
                 if (atTarget != null && atTarget.getPlayer() != sourcePiece.getPlayer()) {
                     moves.addMove(new Move(source, target));
-                }
-                else {
+                } else {
                     Move lastMove = chess.getLastMove();
                     if (atTarget == null &&
                             lastMove != null &&
@@ -201,15 +202,15 @@ class PawnMoveGenerator implements IMoveGenerator {
 }
 
 class Crown implements IMoveGenerator {
-    private final Position[] directions = new Position[] {
+    private final Position[] directions = new Position[]{
             new Position(-1, -1),
-            new Position (-1, 0),
-            new Position (-1, 1),
-            new Position (0, -1),
-            new Position (0, 1),
-            new Position (1, -1),
-            new Position (1, 0),
-            new Position (1, 1)
+            new Position(-1, 0),
+            new Position(-1, 1),
+            new Position(0, -1),
+            new Position(0, 1),
+            new Position(1, -1),
+            new Position(1, 0),
+            new Position(1, 1)
     };
 
     @Override

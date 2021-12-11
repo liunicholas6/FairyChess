@@ -46,6 +46,25 @@ public class GameState {
 
     @Override
     public String toString() {
+        String playerName = "";
+        if (player != null) {
+            switch (player) {
+                case PLAYER1:
+                    playerName = "White";
+                    break;
+                case PLAYER2:
+                    playerName = "Black";
+                    break;
+            }
+        }
+        switch (type) {
+            case RUNNING:
+                return playerName + "'s turn!";
+            case CHECKMATE:
+                return "Checkmate! " + playerName + " wins.";
+            case STALEMATE:
+                return "It's a stalemate!";
+        }
         return "GameState{" +
                 "player=" + player +
                 ", type=" + type +

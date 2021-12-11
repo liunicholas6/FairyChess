@@ -3,7 +3,7 @@ package org.cis120.chess;
 
 import java.util.ArrayList;
 
-public class Board{
+public class Board {
     private final static int MAX_DIM = 100;
     private final Piece[][] representation;
     private final int rows;
@@ -11,10 +11,11 @@ public class Board{
 
     /**
      * Generates an empty board with the given number of rows and columns.
+     *
      * @param rows number of rows
      * @param cols number of columns
      */
-    public Board (int rows, int cols) {
+    public Board(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         representation = new Piece[rows][cols];
@@ -66,8 +67,6 @@ public class Board{
         return result;
     }
 
-
-
     public Piece capturePiece(Position pos) {
         Piece captured = getPiece(pos);
         setPiece(pos, null);
@@ -76,7 +75,6 @@ public class Board{
         }
         return captured;
     }
-
 
 
     @Override
@@ -90,7 +88,7 @@ public class Board{
             sb.append("| ");
             for (int r = 0; r < rows; r++) {
                 Piece piece = representation[r][c];
-                sb.append(piece == null? " " : piece.getSymbol()).append(" | ");
+                sb.append(piece == null ? " " : piece.getSymbol()).append(" | ");
             }
             sb.append("\n");
             for (int r = 0; r < rows; r++) {
@@ -102,7 +100,7 @@ public class Board{
         return sb.toString();
     }
 
-    public void copyOnto (Board other) {
+    public void copyOnto(Board other) {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 Piece original = representation[r][c];

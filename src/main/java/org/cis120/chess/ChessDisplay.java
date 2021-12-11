@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChessDisplay extends JPanel{
+public class ChessDisplay extends JPanel {
 
     private Chess chess;
     private JLabel status;
@@ -39,7 +39,7 @@ public class ChessDisplay extends JPanel{
             @Override
             public void mouseReleased(MouseEvent e) {
                 Point p = e.getPoint();
-                Position position = new Position(7 - (400-(p.x))/50, 7 - p.y/50);
+                Position position = new Position(7 - (400 - (p.x)) / 50, 7 - p.y / 50);
                 chess.handlePositionalInput(position);
 
                 updateStatus();
@@ -50,9 +50,9 @@ public class ChessDisplay extends JPanel{
         try {
             WHITE_TILE = ImageIO.read(new File("files/ChessSprites/tile_white.png"));
             BLACK_TILE = ImageIO.read(new File("files/ChessSprites/tile_black.png"));
-            for(Piece piece : chess.getPieces()) {
+            for (Piece piece : chess.getPieces()) {
                 String filePath = piece.getFilePath();
-                if (!piece_images.containsKey(filePath)){
+                if (!piece_images.containsKey(filePath)) {
                     piece_images.put(filePath, ImageIO.read(new File(filePath)));
                 }
             }
@@ -80,13 +80,13 @@ public class ChessDisplay extends JPanel{
         status.setText(chess.getGameState().toString());
     }
 
-    private void drawAtPosition (Graphics g, BufferedImage image, int row, int column) {
+    private void drawAtPosition(Graphics g, BufferedImage image, int row, int column) {
         g.drawImage(image, row * 50, (7 - column) * 50, TILE_SIZE, TILE_SIZE, null);
     }
 
     /**
      * Draws the game board.
-     *
+     * <p>
      * There are many ways to draw a game board. This approach
      * will not be sufficient for most games, because it is not
      * modular. All of the logic for drawing the game board is
@@ -110,7 +110,7 @@ public class ChessDisplay extends JPanel{
                 g.fillRect(position.getX() * 50, (7 - position.getY()) * 50, 50, 50);
             }
         }
-        for (Piece piece: chess.getPieces()) {
+        for (Piece piece : chess.getPieces()) {
             Position position = piece.getPosition();
             if (position != null) {
                 drawAtPosition(g, piece_images.get(piece.getFilePath()), position.getX(), position.getY());

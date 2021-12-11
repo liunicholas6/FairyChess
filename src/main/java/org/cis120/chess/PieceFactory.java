@@ -8,7 +8,7 @@ public class PieceFactory {
                 .append("_")
                 .append(name)
                 .append(".png");
-        return new Piece (filePathBuilder.toString(), symbol, moveGenerator, player, position);
+        return new Piece(filePathBuilder.toString(), symbol, moveGenerator, player, position);
     }
 
     public static Piece getPiece(char pieceSymbol, Player player, int x, int y) {
@@ -17,19 +17,19 @@ public class PieceFactory {
 
     public static Piece getPiece(char pieceSymbol, Player player, Position position) {
         switch (pieceSymbol) {
-            case 'P' :
+            case 'P':
                 IMoveGenerator moveGenerator = (player == Player.PLAYER1) ?
                         IMoveGenerator.WHITE_PAWN : IMoveGenerator.BLACK_PAWN;
                 return ChessPiece("pawn", 'P', moveGenerator, player, position);
-            case 'R' :
-                return ChessPiece("rook",'R', IMoveGenerator.ROOK, player, position);
-            case 'N' :
+            case 'R':
+                return ChessPiece("rook", 'R', IMoveGenerator.ROOK, player, position);
+            case 'N':
                 return ChessPiece("knight", 'N', IMoveGenerator.KNIGHT, player, position);
-            case 'B' :
+            case 'B':
                 return ChessPiece("bishop", 'B', IMoveGenerator.BISHOP, player, position);
-            case 'Q' :
+            case 'Q':
                 return ChessPiece("queen", 'Q', IMoveGenerator.QUEEN, player, position);
-            case 'K' :
+            case 'K':
                 return ChessPiece("king", 'K', IMoveGenerator.KING, player, position);
             default:
                 throw new IllegalArgumentException();

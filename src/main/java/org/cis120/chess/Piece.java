@@ -10,7 +10,7 @@ public class Piece {
     private Position position;
     private boolean moved = false;
 
-    public Piece (String filePath, char symbol, IMoveGenerator IMoveGenerator, Player player, Position position) {
+    public Piece(String filePath, char symbol, IMoveGenerator IMoveGenerator, Player player, Position position) {
         this.filePath = filePath;
         this.symbol = symbol;
         this.moveGenerator = IMoveGenerator;
@@ -57,9 +57,8 @@ public class Piece {
     @Override
     public String toString() {
         return "Piece{" +
-                "symbol=" + symbol +
-                ", moveGenerator=" + moveGenerator +
-                ", player=" + player +
+                ", position=" + position +
+                ", moved=" + moved +
                 '}';
     }
 }

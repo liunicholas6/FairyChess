@@ -3,7 +3,7 @@ package org.cis120.chess;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class Chess{
+class Chess {
     private final Board board;
     private final ArrayList<Move> moveHistory;
     private final Map<Player, Piece> royals;
@@ -84,7 +84,6 @@ class Chess{
                 .stream().parallel()
                 .filter(move -> {
                     Chess copy = new Chess(this);
-                    board.copyOnto(copy.board);
                     move.move(copy);
                     return !copy.inCheck(piece.getPlayer());
                 })
@@ -100,8 +99,7 @@ class Chess{
     public void handlePositionalInput(Position position) {
         if (selectedMoves != null && selectedMoves.containsKey(position)) {
             movePiece(position);
-        }
-        else {
+        } else {
             selectPiece(position);
         }
     }
@@ -113,6 +111,48 @@ class Chess{
                 pieceAtPosition : null;
         selectedMoves = (selectedPiece == null) ? null :
                 generateMoves(selectedPiece);
+        if (royals.containsValue(selectedPiece) && !selectedPiece.isMoved()) {
+            makeKingSideCastle();
+            makeQueenSideCastle();
+        }
+    }
+
+    private void makeKingSideCastle() {
+        int y = gameState.getPlayer() == Player.PLAYER1 ? 0 : 7;
+        Piece rook = board.getPiece(new Position(7, y));
+        if (rook == null || rook.isMoved()) {
+            return;
+        }
+        for (int x = 5; x <= 6; x++) {
+            if (board.getPiece(new Position(x, y)) != null) {
+                return;
+            }
+        }
+        for (int x = 4; x <= 6; x++) {
+            if (isThreatened(gameState.getPlayer(), new Position(x, y))) {
+                return;
+            }
+        }
+        selectedMoves.addMove(new CastleMove(y, true));
+    }
+
+    private void makeQueenSideCastle() {
+        int y = gameState.getPlayer() == Player.PLAYER1 ? 0 : 7;
+        Piece rook = board.getPiece(new Position(0, y));
+        if (rook == null || rook.isMoved()) {
+            return;
+        }
+        for (int x = 1; x <= 3; x++) {
+            if (board.getPiece(new Position(x, y)) != null) {
+                return;
+            }
+        }
+        for (int x = 2; x <= 4; x++) {
+            if (isThreatened(gameState.getPlayer(), new Position(x, y))) {
+                return;
+            }
+        }
+        selectedMoves.addMove(new CastleMove(y, false));
     }
 
     public void movePiece(Position pos) {
@@ -138,16 +178,18 @@ class Chess{
     }
 
     public void nextTurn() {
-        Player nextPlayer = GameState.getOtherPlayer(gameState.getPlayer());
-        GameStateType gameStateType = GameStateType.RUNNING;
+        Player thisPlayer = gameState.getPlayer();
+        Player nextPlayer = GameState.getOtherPlayer(thisPlayer);
         boolean noMoves = getPieces()
                 .stream().parallel()
                 .filter(piece -> piece.getPlayer() == nextPlayer)
                 .map(piece -> generateMoves(piece).size() == 0)
                 .reduce(true, (elem, acc) -> elem && acc);
         if (noMoves) {
-            gameStateType = inCheck(nextPlayer) ? GameStateType.CHECKMATE : GameStateType.STALEMATE;
+            gameState = new GameState(inCheck(nextPlayer) ? GameStateType.CHECKMATE : GameStateType.STALEMATE, thisPlayer);
         }
-        gameState = new GameState(gameStateType, nextPlayer);
+        else {
+            gameState = new GameState(GameStateType.RUNNING, nextPlayer);
+        }
     }
 }

@@ -3,7 +3,7 @@ package org.cis120.chess;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Position implements Comparable<Position>{
+public class Position implements Comparable<Position> {
 
     private static final Position NORTH = new Position(0, 1);
     private static final Position SOUTH = new Position(0, -1);
@@ -13,15 +13,15 @@ public class Position implements Comparable<Position>{
     private final int x;
     private final int y;
 
-    public Position (int x, int y) {
+    public Position(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public Position (String string) {
+    public Position(String string) {
         String[] parts = string.split("(?<=\\D)(?=\\d)");
         int horizontal = 0;
-        for(char c: parts[0].toLowerCase().toCharArray()){
+        for (char c : parts[0].toLowerCase().toCharArray()) {
             horizontal += c - 97;
         }
         this.x = horizontal;
@@ -37,16 +37,17 @@ public class Position implements Comparable<Position>{
     }
 
     public Position plus(Position other) {
-        return new Position (x + other.x, y + other.y);
+        return new Position(x + other.x, y + other.y);
     }
 
     public Position minus(Position other) {
-        return new Position (x - other.x, y - other.y);
+        return new Position(x - other.x, y - other.y);
     }
 
     public Position times(int scale) {
-        return new Position (x * scale, y * scale);
+        return new Position(x * scale, y * scale);
     }
+
     public Position flipDirectionIfPlayer2(Player player) {
         if (player == Player.PLAYER1) {
             return this;
@@ -63,26 +64,26 @@ public class Position implements Comparable<Position>{
 
     public Position[] allDirections() {
         if (x == 0 && y == 0) {
-            return new Position[] {this};
+            return new Position[]{this};
         }
         if (x == 0) {
-            return new Position[] {
+            return new Position[]{
                     this,
                     new Position(y, 0),
                     new Position(0, -y),
-                    new Position (-y, 0)
+                    new Position(-y, 0)
             };
         }
         if (y == 0) {
-            return new Position[] {
+            return new Position[]{
                     this,
                     new Position(0, x),
                     new Position(-x, 0),
-                    new Position (0, -x)
+                    new Position(0, -x)
             };
         }
         if (x == y) {
-            return new Position[] {
+            return new Position[]{
                     this,
                     new Position(x, y),
                     new Position(-x, y),
@@ -90,7 +91,7 @@ public class Position implements Comparable<Position>{
                     new Position(-x, -y)
             };
         }
-        return new Position[] {
+        return new Position[]{
                 this,
                 new Position(y, x),
                 new Position(-x, y),

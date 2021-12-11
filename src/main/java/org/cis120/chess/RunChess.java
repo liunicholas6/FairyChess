@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class RunChess implements Runnable{
+public class RunChess implements Runnable {
     public void run() {
 
         final JFrame frame = new JFrame("Chess");
@@ -25,12 +25,12 @@ public class RunChess implements Runnable{
         frame.add(control_panel, BorderLayout.NORTH);
 
         final JButton reset = new JButton("Reset");
-        reset.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                chessDisplay.reset();
-            }
-        });
+        reset.addActionListener(e -> chessDisplay.reset());
         control_panel.add(reset);
+
+        JOptionPane.showMessageDialog(null,
+                "Hello! This is an implementation of Chess. Click a piece to see where it can move " +
+                        "and click again on a highlighted square to move the piece.");
 
         // Put the frame on the screen
         frame.pack();
